@@ -19,8 +19,8 @@ jobs: # определение запускаемых джоб
 
       - name: Build Docker
         run: |
-          docker build -t my-app
-          docker run --rm my-app
+          docker build -t app
+          docker run --rm app
 
   test:
     runs-on: ubuntu-latest
