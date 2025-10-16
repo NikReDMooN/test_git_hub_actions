@@ -1,0 +1,11 @@
+name: Test CI/CD pipe hello world # имя рабочего процесса
+
+on: [push] # При каком событие запустить данный пайп
+
+jobs: # определение запускаемых джоб
+  print_hello_world: # название джоба
+    runs-on: ubuntu-latest # на какой виртуалке это все будет выполняться
+
+    steps: # шаги джоба
+      - name: print_hello_world # наименовыание шага
+        run: echo "Hello, world!" # действие шага
