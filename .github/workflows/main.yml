@@ -18,7 +18,7 @@ jobs: # определение запускаемых джоб
         uses: actions/checkout@v5
 
       - name: Build Docker
-        run:
+        run: |
           docker build -t my-app
           docker run --rm my-app
 
@@ -28,7 +28,7 @@ jobs: # определение запускаемых джоб
 
     steps:
       - name: tests
-        run:
+        run: |
           pip install pytest
           pytest -v
 
