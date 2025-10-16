@@ -15,7 +15,7 @@ jobs: # определение запускаемых джоб
 
     steps:
       - name: Checkout code
-        uses: actions/chekcout@v3
+        uses: actions/checkout@v5
 
       - name: Build Docker
         run:
