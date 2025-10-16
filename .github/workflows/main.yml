@@ -1,4 +1,4 @@
-name: Test CI/CD pipe hello world # имя рабочего процесса
+name: Test CI/CD pipe with Docker # имя рабочего процесса
 
 on: [push] # При каком событие запустить данный пайп
 
@@ -9,3 +9,33 @@ jobs: # определение запускаемых джоб
     steps: # шаги джоба
       - name: print_hello_world # наименовыание шага
         run: echo "Hello, world!" # действие шага
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/chekcout@v3
+
+      - name: Build Docker
+        run:
+          docker build -t my-app
+          docker run --rm my-app
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: tests
+        run:
+          pip install pytest
+          pytest -v
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: deploy
+        run: echo "I made a deploy, I am good job"
