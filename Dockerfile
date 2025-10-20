@@ -1,11 +1,6 @@
-# образ с Pythin
-FROM python:latest
+FROM python:3.11-slim
 
-# рабочая директория
 WORKDIR /app
+COPY . /app
 
-# копируем наш код внутрь контейнера
-COPY app.py .
-
-# Запуск при старте контейнера
 CMD ["python", "app.py"]

@@ -1,0 +1,46 @@
+name: Build, Test and Run container
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-test-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (optional, for multi-arch)
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (load to local)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          tags: my-workflow-image:latest
+
+      - name: Set up Python for tests
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install test deps
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt
+
+      - name: Run pytest (checks app.py exists)
+        run: pytest -q
+
+      - name: Run container and show logs
+        run: |
+          # Run container in background, capture its output
+          docker run --rm --name my-workflow-container my-workflow-image:latest > container.log 2>&1 || true
+          echo "---- container output ----"
+          cat container.log
