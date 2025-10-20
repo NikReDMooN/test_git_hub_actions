@@ -1,0 +1,39 @@
+# .github/workflows/main.yml
+name: My Simple Workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # позволяет запускать вручную
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout кода
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Установка Python и pytest
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pytest
+        run: pip install pytest
+
+      # 3. Запуск теста
+      - name: Run pytest to check app.py exists
+        run: pytest test_app.py -v
+
+      # 4. Сборка Docker-образа
+      - name: Build Docker image
+        run: docker build -t my-app .
+
+      # 5. Запуск контейнера и вывод фразы
+      - name: Run container and print message
+        run: docker run --rm my-app
