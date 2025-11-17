@@ -1,0 +1,22 @@
+name: HW
+
+on: [push]
+
+jobs:
+  workflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Build docker image
+        run: docker build -t my-app .
+
+      - name: Run tests
+        run: |
+          pip install pytest
+          pytest -v
+
+      - name: Run docker container
+        run: docker run --rm my-app
