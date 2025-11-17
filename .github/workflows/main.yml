@@ -11,20 +11,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (for cross-platform Docker)
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub (optional)
+        if: false
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker image
         run: |
-          docker build -t my-app .
+          docker build -t my-workflow-image:latest .
 
-      - name: Check for app.py file with pytest
+      - name: Run pytest
         run: |
-          python -m pytest -c -k 'app.py' --disable-warnings 
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest
+          pytest -q
 
-      - name: Run Docker container
+      - name: Run container and print message
         run: |
-          docker run my-app
+          # Run container in background and capture logs
+          CONTAINER_ID=$(docker run -d my-workflow-image:latest)
+          # Wait a bit for the container to start
+          sleep 2
+          # Show container logs (should contain "it's my workflow")
+          docker logs $CONTAINER_ID
+          # Stop and remove the container
+          docker stop $CONTAINER_ID
+          docker rm $CONTAINER_ID
