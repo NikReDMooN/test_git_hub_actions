@@ -1,13 +1,12 @@
-name: My Workflow
+name: My Simple Workflow
 
 on:
   push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build-and-test:
+  build-test-run:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,10 +14,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: docker build -t my-workflow-app .
+        run: docker build -t my-app:latest .
 
-      - name: Run pytest inside Docker
-        run: docker run my-workflow-app pytest test_app.py
+      - name: Run pytest
+        run: |
+          pip install pytest
+          pytest -v
 
-      - name: Run container and print message
-        run: docker run my-workflow-app
+      - name: Run Docker container
+        run: docker run --rm my-app:latest
